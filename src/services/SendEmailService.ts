@@ -1,5 +1,9 @@
-import nodemailer, { Transporter } from 'nodemailer'
-import SMTPTransport from 'nodemailer/lib/smtp-transport'
+import nodemailer, { Transporter } from 'nodemailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import {resolve} from 'path';
+import handlebar from 'handlebars';
+import fs from 'fs';
+
 class SendMailService {
     private client:Transporter;  
 
@@ -20,6 +24,11 @@ class SendMailService {
     }
 
     async execute(to:string,subject:string,body:string){
+        const pathMail = resolve(__dirname,"..","views","emails","npsMail.hbs");
+        const templateFileContent = fs.readFileSync(pathMail).toString('utf-8');
+        const mailTemplateParse=handlebar.compile(templateFileContent);
+
+        
         const msg = await this.client.sendMail({
             to,
             subject,
