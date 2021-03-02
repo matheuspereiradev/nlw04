@@ -23,16 +23,16 @@ class SendMailService {
         });
     }
 
-    async execute(to:string,subject:string,body:string){
-        const pathMail = resolve(__dirname,"..","views","emails","npsMail.hbs");
-        const templateFileContent = fs.readFileSync(pathMail).toString('utf-8');
+    async execute(to:string,subject:string,variables:object,path:string){
+        const templateFileContent = fs.readFileSync(path).toString('utf-8');
         const mailTemplateParse=handlebar.compile(templateFileContent);
 
-        
+        const html = mailTemplateParse(variables)
+
         const msg = await this.client.sendMail({
             to,
             subject,
-            html:body,
+            html,
             from:"MATHEUS <noreply@nps.com.br>"
         });
 
